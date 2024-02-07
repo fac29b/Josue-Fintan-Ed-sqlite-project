@@ -1,3 +1,18 @@
+async function retrieveUserData() {
+  const usernameText = document.getElementById("username");
+  const response = await fetch("/retrieveUserData", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  });
+  const data = await response.json();
+  if (response.ok) {
+    usernameText.textContent = data.username;
+  } else {
+    usernameText.textContent = "Undefined";
+  }
+}
+
 // Example data of posts (replace this with actual data)
 const posts = [
   {
@@ -37,5 +52,8 @@ function addPosts() {
   });
 }
 
-// Call the addPosts function when the page loads
-window.addEventListener("load", addPosts);
+// Call functions when the page loads
+window.addEventListener("load", function () {
+  addPosts();
+  retrieveUserData();
+});
