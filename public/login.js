@@ -9,6 +9,8 @@ async function handleLogin(event) {
   });
   const data = await response.json();
   if (response.ok) {
+    sessionStorage.setItem("clientId", data.userId);
+    sessionStorage.setItem("clientUsername", data.username);
     window.location.href = "/home";
   } else {
     displayErrorMessage(data.error);

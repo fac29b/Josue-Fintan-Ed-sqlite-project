@@ -35,25 +35,39 @@ function insertPost(db, title, content, authorId) {
   const stmt = db.prepare(
     "INSERT INTO Posts (title, content, author_id) VALUES (?, ?, ?)"
   );
-  stmt.run(title, content, authorId);
+  try {
+    stmt.run(title, content, authorId);
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
 }
 
 // Function to insert a new post into the Posts table
-function retrieveUserData(db, username) {
-  const stmt = db.prepare("SELECT username FROM Users WHERE username = ?");
+function retrieveUserData(db, userId) {
+  const stmt = db.prepare("SELECT * FROM Posts WHERE author_id = ?");
   try {
-    return { success: true, username: stmt.get(username) };
+    return { success: true, userPostData: stmt.all(userId) };
   } catch (error) {
-    return false;
+    return { success: false };
   }
 }
 
 // Function to retrieve a user by username and password
 function getUserByUsernameAndPassword(db, username, password) {
   const stmt = db.prepare(
-    "SELECT * FROM Users WHERE username = ? AND password = ?"
+    "SELECT user_id, username FROM Users WHERE username = ? AND password = ?"
   );
-  return stmt.get(username, password);
+  try {
+    const userData = stmt.get(username, password);
+    if (userData) {
+      return { success: true, userData };
+    } else {
+      return { success: false, error: "User not found" };
+    }
+  } catch (error) {
+    return { success: false };
+  }
 }
 
 module.exports = {

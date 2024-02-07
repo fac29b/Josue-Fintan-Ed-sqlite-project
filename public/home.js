@@ -1,39 +1,26 @@
 async function retrieveUserData() {
   const usernameText = document.getElementById("username");
+  const clientId = sessionStorage.getItem("clientId");
+  const clientUsername = sessionStorage.getItem("clientUsername");
   const response = await fetch("/retrieveUserData", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({}),
+    body: JSON.stringify({ userId: clientId }),
   });
   const data = await response.json();
   if (response.ok) {
-    usernameText.textContent = data.username;
+    usernameText.textContent = clientUsername;
+    addPosts(data.userPostData.userPostData);
   } else {
     usernameText.textContent = "Undefined";
   }
 }
 
-// Example data of posts (replace this with actual data)
-const posts = [
-  {
-    title: "First Post",
-    content: "This is the content of the first post.",
-  },
-  {
-    title: "Second Post",
-    content: "This is the content of the second post.",
-  },
-  {
-    title: "Third Post",
-    content: "This is the content of the third post.",
-  },
-];
-
 // Function to add posts to the post list
-function addPosts() {
+function addPosts(postData) {
   const postList = document.getElementById("post-list");
 
-  posts.forEach((post) => {
+  for (const post of postData) {
     const li = document.createElement("li");
     li.classList.add("post-item");
 
@@ -43,17 +30,16 @@ function addPosts() {
 
     const content = document.createElement("p");
     content.classList.add("post-content");
-    content.textContent = post.content;
+    content.innerHTML = post.content.replace(/\n/g, "<br>");
 
     li.appendChild(title);
     li.appendChild(content);
 
     postList.insertBefore(li, postList.firstChild);
-  });
+  }
 }
 
 // Call functions when the page loads
 window.addEventListener("load", function () {
-  addPosts();
   retrieveUserData();
 });
