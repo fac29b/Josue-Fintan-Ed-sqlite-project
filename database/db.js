@@ -43,11 +43,49 @@ function insertPost(db, title, content, authorId) {
   }
 }
 
+// Function remove posts
+function removePosts(db, authorId, postId) {
+  const stmt = db.prepare(
+    "DELETE FROM Posts WHERE author_id = ? AND post_id = ?"
+  );
+  try {
+    stmt.run(authorId, postId);
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+}
+
+// Function remove posts
+function updatePost(db, authorId, postId, title, content) {
+  const stmt = db.prepare(
+    "UPDATE Posts SET title = ?, content = ? WHERE author_id = ? AND post_id = ?"
+  );
+  try {
+    stmt.run(title, content, authorId, postId);
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+}
+
 // Function to insert a new post into the Posts table
 function retrieveUserData(db, userId) {
   const stmt = db.prepare("SELECT * FROM Posts WHERE author_id = ?");
   try {
     return { success: true, userPostData: stmt.all(userId) };
+  } catch (error) {
+    return { success: false };
+  }
+}
+
+// Function to insert a new post into the Posts table
+function retrieveUserSinglePost(db, userId, postId) {
+  const stmt = db.prepare(
+    "SELECT * FROM Posts WHERE author_id = ? AND post_id = ?"
+  );
+  try {
+    return { success: true, userPostData: stmt.all(userId, postId) };
   } catch (error) {
     return { success: false };
   }
@@ -76,4 +114,7 @@ module.exports = {
   insertPost,
   getUserByUsernameAndPassword,
   retrieveUserData,
+  removePosts,
+  retrieveUserSinglePost,
+  updatePost,
 };

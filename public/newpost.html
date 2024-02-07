@@ -17,7 +17,7 @@
           id="display-message"
           style="display: none; color: none; margin-bottom: 10px"
         ></div>
-        <form action="/newpost" method="POST" onsubmit="newPost(event)">
+        <form action="/newpost" method="POST" onsubmit="newPost(event, this)">
           <label for="title">Title:</label><br />
           <input type="text" id="title" name="title" required /><br /><br />
 

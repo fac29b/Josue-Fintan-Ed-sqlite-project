@@ -10,6 +10,9 @@ const {
   insertPost,
   getUserByUsernameAndPassword,
   retrieveUserData,
+  removePosts,
+  retrieveUserSinglePost,
+  updatePost,
 } = require("./database/db");
 
 // Initialize database
@@ -88,6 +91,49 @@ app.post("/storeNewPost", express.json(), (req, res) => {
     req.body.postTitle,
     req.body.postContent,
     req.body.userId
+  );
+  if (response.success) {
+    res.status(200).json({ message: "Posted." });
+  } else {
+    res.status(500).json({ error: "Something went wrong try again." });
+  }
+});
+
+app.post("/retrieveDataForPost", express.json(), (req, res) => {
+  const postData = retrieveUserSinglePost(
+    blogDatabase,
+    req.body.userId,
+    req.body.postTofindId
+  );
+  if (postData.success) {
+    res
+      .status(200)
+      .json({ message: "Post retrieved.", foundPostData: postData });
+  } else {
+    res.status(500).json({ error: "Something went wrong try again." });
+  }
+});
+
+app.post("/removePost", express.json(), (req, res) => {
+  const response = removePosts(
+    blogDatabase,
+    req.body.userId,
+    req.body.postToRemoveId
+  );
+  if (response.success) {
+    res.status(200).json({ message: "Posted." });
+  } else {
+    res.status(500).json({ error: "Something went wrong try again." });
+  }
+});
+
+app.post("/updatePost", express.json(), (req, res) => {
+  const response = updatePost(
+    blogDatabase,
+    req.body.userId,
+    req.body.postToRemoveId,
+    req.body.title,
+    req.body.content
   );
   if (response.success) {
     res.status(200).json({ message: "Posted." });

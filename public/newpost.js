@@ -1,4 +1,4 @@
-async function newPost(event) {
+async function newPost(event, form) {
   event.preventDefault();
   const title = document.getElementById("title").value;
   const content = document.getElementById("content").value;
@@ -14,8 +14,7 @@ async function newPost(event) {
   });
   const data = await response.json();
   if (response.ok) {
-    title.value = "";
-    content.value = "";
+    form.reset();
     displayMessage(data.message, true);
   } else {
     displayMessage(data.error, false);
