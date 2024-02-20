@@ -49,17 +49,18 @@ textarea {
   box-sizing: border-box;
 }
 
-button[type="submit"] {
+button {
   background-color: #007bff;
   color: #fff;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
+  margin-right: 10px;
   cursor: pointer;
   font-size: 16px;
 }
 
-button[type="submit"]:hover {
+button:hover {
   background-color: #0056b3;
 }
 
@@ -76,7 +77,6 @@ a:hover {
 
 p {
   margin-top: 15px;
-  text-align: center;
 }
 
 .post-list {
@@ -127,6 +127,7 @@ p {
 
 .user-menu h2 {
   margin-top: 0;
+  text-align: center;
 }
 
 .user-menu a {
@@ -205,4 +206,24 @@ input[type="submit"]:hover {
   max-width: 600px;
   margin: 0 auto;
   margin-top: 20px;
+}
+
+.button-container {
+  display: flex;
+}
+
+.post-menu-button {
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  padding: 6px 20px;
+  margin-right: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.post-menu-button:hover {
+  background-color: #0056b3;
+  text-decoration: none;
 }

@@ -14,7 +14,16 @@
       <br />
       <div id="register-form">
         <h2>Register</h2>
-        <form id="register-form" action="/register" method="POST">
+        <form
+          id="register-form"
+          action="/register"
+          method="POST"
+          onsubmit="handleRegistration(event)"
+        >
+          <div
+            id="error-message"
+            style="display: none; color: none; margin-bottom: 10px"
+          ></div>
           <div>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required />
@@ -39,5 +48,6 @@
         <p>Already have an account? <a href="/">Login</a></p>
       </div>
     </div>
+    <script src="./register.js"></script>
   </body>
 </html>

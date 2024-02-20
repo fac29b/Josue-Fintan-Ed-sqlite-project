@@ -1,7 +1,22 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const db = require("better-sqlite3");
 require("dotenv").config();
+
+const {
+  initializeDatabase,
+  insertUser,
+  insertPost,
+  getUserByUsernameAndPassword,
+  retrieveUserData,
+  removePosts,
+  retrieveUserSinglePost,
+  updatePost,
+} = require("./database/db");
+
+// Initialize database
+const blogDatabase = initializeDatabase(process.env.BLOG_DB);
 
 const app = express();
 const port = 3000;
@@ -12,6 +27,10 @@ app.use(express.static("public"));
 // GET
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/login.js", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.js"));
 });
 
 app.get("/register", (req, res) => {
@@ -36,20 +55,100 @@ app.get("/styles.css", (req, res) => {
 
 // POST
 
-app.post("/login", (req, res) => {
-  res.redirect("/home");
+app.post("/login", express.json(), (req, res) => {
+  const { username, password } = req.body;
+  const user = getUserByUsernameAndPassword(blogDatabase, username, password);
+  if (user.success) {
+    res.status(200).json({
+      userId: user.userData.user_id,
+      username: user.userData.username,
+      message: "Login successful.",
+    });
+  } else {
+    res.status(401).json({ error: "Invalid username or password." });
+  }
 });
 
-app.post("/logout", (req, res) => {
+app.post("/register", express.json(), (req, res) => {
+  const { username, password } = req.body;
+  const userExist = insertUser(blogDatabase, username, password);
+  if (userExist) {
+    res
+      .status(200)
+      .json({ success: true, message: "Registration successful." });
+  } else {
+    res.status(409).json({ success: false, error: "Username already taken." });
+  }
+});
+
+app.post("/logout", express.json(), (req, res) => {
   res.redirect("/");
 });
 
-app.post("/newpost", (req, res) => {
-  res.redirect("/home");
+app.post("/storeNewPost", express.json(), (req, res) => {
+  const response = insertPost(
+    blogDatabase,
+    req.body.postTitle,
+    req.body.postContent,
+    req.body.userId
+  );
+  if (response.success) {
+    res.status(200).json({ message: "Posted." });
+  } else {
+    res.status(500).json({ error: "Something went wrong try again." });
+  }
 });
 
-app.post("/register", (req, res) => {
-  res.redirect("/");
+app.post("/retrieveDataForPost", express.json(), (req, res) => {
+  const postData = retrieveUserSinglePost(
+    blogDatabase,
+    req.body.userId,
+    req.body.postTofindId
+  );
+  if (postData.success) {
+    res
+      .status(200)
+      .json({ message: "Post retrieved.", foundPostData: postData });
+  } else {
+    res.status(500).json({ error: "Something went wrong try again." });
+  }
+});
+
+app.post("/removePost", express.json(), (req, res) => {
+  const response = removePosts(
+    blogDatabase,
+    req.body.userId,
+    req.body.postToRemoveId
+  );
+  if (response.success) {
+    res.status(200).json({ message: "Posted." });
+  } else {
+    res.status(500).json({ error: "Something went wrong try again." });
+  }
+});
+
+app.post("/updatePost", express.json(), (req, res) => {
+  const response = updatePost(
+    blogDatabase,
+    req.body.userId,
+    req.body.postToRemoveId,
+    req.body.title,
+    req.body.content
+  );
+  if (response.success) {
+    res.status(200).json({ message: "Posted." });
+  } else {
+    res.status(500).json({ error: "Something went wrong try again." });
+  }
+});
+
+app.post("/retrieveUserData", express.json(), (req, res) => {
+  const userPostData = retrieveUserData(blogDatabase, req.body.userId);
+  if (userPostData.success) {
+    res.send({ userPostData: userPostData });
+  } else {
+    res.status(404).json({ success: false, error: "User data not found." });
+  }
 });
 
 app.listen(port, () => {

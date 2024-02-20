@@ -13,7 +13,11 @@
       </header>
       <div class="container-newpost">
         <h1>Create New Post</h1>
-        <form action="/newpost" method="POST">
+        <div
+          id="display-message"
+          style="display: none; color: none; margin-bottom: 10px"
+        ></div>
+        <form action="/newpost" method="POST" onsubmit="newPost(event, this)">
           <label for="title">Title:</label><br />
           <input type="text" id="title" name="title" required /><br /><br />
 
@@ -23,8 +27,9 @@
 
           <button type="submit">Submit</button>
         </form>
-        <a href="/">Back to Home</a>
+        <a href="/home">Back to Home</a>
       </div>
     </div>
+    <script src="./newpost.js"></script>
   </body>
 </html>
